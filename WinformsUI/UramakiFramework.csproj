@@ -48,6 +48,9 @@
     <Compile Include="Base\huramakiBase.cs" />
     <Compile Include="Base\huramakiFramework.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Desktop\huramakiDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

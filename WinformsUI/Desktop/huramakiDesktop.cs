@@ -1,25 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-//using DevExpress.XtraBars.Docking;
 
-using DevExpress.XtraBars;
-using DevExpress.XtraEditors;
-
-using RCL.obo.Base;
-using RCL.obo.Framework;
+using Mammola.Huramaki.WinformsUI.Base;
 using WeifenLuo.WinFormsUI.Docking;
 
 
-
-namespace RCL.obo.Desktop
-{  
-  public class TOboDesktopPlate : DockContent
+namespace Mammola.Huramaki.WinformsUI.Desktop
+{
+  public class HuramakiDesktopPlate : DockContent
   {
 
-    public TOboFramework Framework;
+    public HuramakiFramework Framework;
 
-    public TOboDesktopPlate():base()
+    public HuramakiDesktopPlate() : base()
     {
       /*
       FTempListBoxControl = new ListBoxControl();
@@ -35,49 +28,38 @@ namespace RCL.obo.Desktop
   }
 
 
-  public class TOboDesktopManager
+  public class HuramakiDesktopManager
   {
-    private class TMenuItemInfo 
+    private class TMenuItemInfo
     {
-      public TOboPublisher Publisher;
-      public TOboTransformer Transformer;
+      public HuramakiPublisher Publisher;
+      public HuramakiTransformer Transformer;
     }
 
 
-    private TOboFramework Framework;
+    private HuramakiFramework Framework;
     private Form FParentForm;
     private DockPanel FDockPanel;
-    private BarManager FBarManager;
-    private Bar FMainToolbar; 
-    private Bar FCustomToolbar;   
-    int FLastActivePanelHashCode;
-    private BarButtonItem FLoadMenuButton;
-    private BarButtonItem FSaveMenuButton;
-    private BarButtonItem FAddNewButton;
-    private BarButtonItem FAddChildButton;
-    private PopupMenu FTransformersPopupMenu;
+    private ToolStrip FMainToolbar;
 
-    
+    int FLastActivePanelHashCode;
+    private ToolStripButton FLoadMenuButton;
+    private ToolStripButton FSaveMenuButton;
+    private ToolStripButton FAddNewButton;
+    private ToolStripButton FAddChildButton;
+    //private PopupMenu FTransformersPopupMenu;
+
+
     private void CreateStandardToolbar()
     {
-      FBarManager.BeginUpdate();
-      try
-      {
-        FMainToolbar = new Bar(FBarManager, "Main Toolbar");      
-        FMainToolbar.DockStyle = BarDockStyle.Top;
-        FLoadMenuButton = new BarButtonItem(FBarManager, "Load..");        
-        FMainToolbar.AddItem(FLoadMenuButton);
-        FSaveMenuButton = new BarButtonItem(FBarManager, "Save..");        
-        FMainToolbar.AddItem(FSaveMenuButton);
-      }
-      finally
-      {
-        FBarManager.EndUpdate();
-      }
+      FLoadMenuButton = new ToolStripButton("Load");
+      FMainToolbar.Items.Add(FLoadMenuButton);
+      FSaveMenuButton = new ToolStripButton("Save");
+      FMainToolbar.Items.Add(FSaveMenuButton);
     }
 
     private void CreateCustomizeToolbar()
-    {
+    {/*
       FBarManager.BeginUpdate();
       try
       {
@@ -86,8 +68,8 @@ namespace RCL.obo.Desktop
 
         FTransformersPopupMenu = new PopupMenu(FBarManager);
         FTransformersPopupMenu.Popup += FTransformersPopupMenu_Popup;
-        List<TOboTransformer> AvailableTransformers = this.Framework.GetAvailableTransformers(TObo.NullOboId);
-        foreach (TOboTransformer TempTransformer in AvailableTransformers)
+        List<HuramakiTransformer> AvailableTransformers = this.Framework.GetAvailableTransformers(Huramaki.NullOboId);
+        foreach (HuramakiTransformer TempTransformer in AvailableTransformers)
         {
           //BarButtonItem 
           BarButtonItem TempMenuItem = new BarButtonItem(FBarManager, TempTransformer.GetDescription());        
@@ -97,10 +79,10 @@ namespace RCL.obo.Desktop
           TempMenuItem.DropDownEnabled = true;
           TempMenuItem.AllowDrawArrow = true;        
           BarItemLink TempBarItemLink = FTransformersPopupMenu.AddItem(TempMenuItem);
-          List<TOboPublisher>AvailablePublishers = this.Framework.GetAvailablePublishers(TempTransformer.GetOutputOboId());
+          List<HuramakiPublisher>AvailablePublishers = this.Framework.GetAvailablePublishers(TempTransformer.GetOutpuHuramakiId());
           PopupMenu TempPopupMenu = new PopupMenu(FBarManager);
           TempMenuItem.DropDownControl = TempPopupMenu;
-          foreach (TOboPublisher TempPublisher in AvailablePublishers)
+          foreach (HuramakiPublisher TempPublisher in AvailablePublishers)
           {
             BarButtonItem TempMenuItemPub = new BarButtonItem(FBarManager, TempPublisher.GetDescription());
             TMenuItemInfo TempMenuInfo = new TMenuItemInfo();
@@ -127,7 +109,7 @@ namespace RCL.obo.Desktop
       {
         FBarManager.EndUpdate();
       }
-      FCustomToolbar.DockRow = 0;
+      FCustomToolbar.DockRow = 0;*/
     }
 
     private void FTransformersPopupMenu_Popup(object sender, EventArgs e)
@@ -135,66 +117,43 @@ namespace RCL.obo.Desktop
       //throw new NotImplementedException();
     }
 
-    private void ResetBarPositions() 
-    {
-      FBarManager.BeginUpdate();
-      try 
-      {
-        int i = 0;
-        foreach(DevExpress.XtraBars.Bar bar in FBarManager.Bars) 
-        {
-          bar.Offset = 0;
-          bar.DockCol = i;
-          bar.DockRow = 0;
-          i++;
-          bar.ApplyDockRowCol();
-        }
-      }
-      finally 
-      {
-        FBarManager.EndUpdate();
-      }
-    }
-
-    void FBarManager_ItemClick(object sender, ItemClickEventArgs e) 
+    /*
+    void FBarManager_ItemClick(object sender, ItemClickEventArgs e)
     {
       BarButtonItem currentButton = e.Item as BarButtonItem;
       if (currentButton == null) return;
-      
-      
+
+
       if ((currentButton.Tag != null) && (currentButton.Tag is TMenuItemInfo))
       {
-        TOboPublisher TempPublisher = (currentButton.Tag as TMenuItemInfo).Publisher;
-        TOboTransformer TempTransformer = (currentButton.Tag as TMenuItemInfo).Transformer;
+        HuramakiPublisher TempPublisher = (currentButton.Tag as TMenuItemInfo).Publisher;
+        HuramakiTransformer TempTransformer = (currentButton.Tag as TMenuItemInfo).Transformer;
 
-        
-        //Framework.BuildPlate(TOboFramework.NullId, nil, nil);
-        TOboDesktopPlate TempPanel = new TOboDesktopPlate();
-        TempPanel.Text = "Report";        
+
+        //Framework.BuildPlate(HuramakiFramework.NullId, nil, nil);
+        HuramakiDesktopPlate TempPanel = new HuramakiDesktopPlate();
+        TempPanel.Text = "Report";
         TempPanel.Show(FDockPanel, DockState.Float);
       }
       //this.FDockPanel.
       //DockPanel TempPanel = FDockManager.AddPanel(DockingStyle.Float);
-      
-    }
 
-    public void Init (ref TOboFramework aFramework, ref Form aParentForm)
+    }*/
+
+    public void Init(ref HuramakiFramework aFramework, ref Form aParentForm)
     {
       this.Framework = aFramework;
       this.FParentForm = aParentForm;
       this.FParentForm.IsMdiContainer = true;
-      FBarManager = new BarManager();
-      FBarManager.Form = aParentForm;      
       CreateStandardToolbar();
       CreateCustomizeToolbar();
-      ResetBarPositions();
-      FBarManager.ItemClick += new ItemClickEventHandler(FBarManager_ItemClick);
+      //FBarManager.ItemClick += new ItemClickEventHandler(FBarManager_ItemClick);
 
-      this.FDockPanel = new DockPanel(); 
+      this.FDockPanel = new DockPanel();
       this.FDockPanel.Dock = DockStyle.Fill;
       FParentForm.Controls.Add(FDockPanel);
       this.FDockPanel.ActiveContentChanged += FDockPanel_ActiveContentChanged;
-      
+
       //FDockManager = new DockManager();
       //FDockManager.Form = FParentForm;
       //FDockManager.ActivePanelChanged += FDockManager_ActivePanelChanged;    
@@ -210,14 +169,14 @@ namespace RCL.obo.Desktop
       if (FLastActivePanelHashCode != TempNewHashCode)
       {
         FLastActivePanelHashCode = TempNewHashCode;
-       ((sender as DockPanel).ActiveContent as DockContent).Text = TempNewHashCode.ToString();
+        ((sender as DockPanel).ActiveContent as DockContent).Text = TempNewHashCode.ToString();
         //MessageBox.Show(TempNewHashCode.ToString());      
       }
     }
 
-    public TOboDesktopPlate CreateDesktopPlate()
+    public HuramakiDesktopPlate CreateDesktopPlate()
     {
-      TOboDesktopPlate TempPanel = new TOboDesktopPlate();
+      HuramakiDesktopPlate TempPanel = new HuramakiDesktopPlate();
       TempPanel.Text = "Report";
       TempPanel.Show(FDockPanel, DockState.Float);
       return TempPanel;
