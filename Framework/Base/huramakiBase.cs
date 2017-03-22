@@ -12,7 +12,7 @@ using System;
 using System.Xml;
 
 
-namespace Mammola.Huramaki.WinformsUI.Base
+namespace Mammola.Huramaki.Base
 {
 
   public delegate void HuramakiAskToRefreshMyChilds(HuramakiPlate aPlate);

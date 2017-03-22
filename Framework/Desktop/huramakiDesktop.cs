@@ -5,12 +5,12 @@ using Mammola.Huramaki.WinformsUI.Base;
 using WeifenLuo.WinFormsUI.Docking;
 
 
-namespace Mammola.Huramaki.WinformsUI.Desktop
+namespace Mammola.Huramaki.Desktop
 {
   public class HuramakiDesktopPlate : DockContent
   {
 
-    public HuramakiFramework Framework;
+    private HuramakiFramework framework;
 
     public HuramakiDesktopPlate() : base()
     {
@@ -37,14 +37,14 @@ namespace Mammola.Huramaki.WinformsUI.Desktop
     }
 
 
-    private HuramakiFramework Framework;
-    private Form FParentForm;
-    private DockPanel FDockPanel;
-    private ToolStrip FMainToolbar;
+    private HuramakiFramework framework;
+    private Form parentForm;
+    private DockPanel dockPanel;
+    private ToolStrip mainToolbar;
 
     int FLastActivePanelHashCode;
-    private ToolStripButton FLoadMenuButton;
-    private ToolStripButton FSaveMenuButton;
+    private ToolStripButton loadMenuButton;
+    private ToolStripButton saveMenuButton;
     private ToolStripButton FAddNewButton;
     private ToolStripButton FAddChildButton;
     //private PopupMenu FTransformersPopupMenu;
@@ -52,10 +52,10 @@ namespace Mammola.Huramaki.WinformsUI.Desktop
 
     private void CreateStandardToolbar()
     {
-      FLoadMenuButton = new ToolStripButton("Load");
-      FMainToolbar.Items.Add(FLoadMenuButton);
-      FSaveMenuButton = new ToolStripButton("Save");
-      FMainToolbar.Items.Add(FSaveMenuButton);
+      loadMenuButton = new ToolStripButton("Load");
+      mainToolbar.Items.Add(loadMenuButton);
+      saveMenuButton = new ToolStripButton("Save");
+      mainToolbar.Items.Add(saveMenuButton);
     }
 
     private void CreateCustomizeToolbar()
@@ -140,20 +140,23 @@ namespace Mammola.Huramaki.WinformsUI.Desktop
 
     }*/
 
-    public void Init(ref HuramakiFramework aFramework, ref Form aParentForm)
+    public void Init(ref HuramakiFramework aFramework, Form aParentForm)
     {
-      this.Framework = aFramework;
-      this.FParentForm = aParentForm;
-      this.FParentForm.IsMdiContainer = true;
+      this.framework = aFramework;
+      this.parentForm = aParentForm;
+      this.parentForm.IsMdiContainer = true;            
+      mainToolbar = new ToolStrip();
+      mainToolbar.Parent = parentForm;
+      mainToolbar.Dock = DockStyle.Top;
       CreateStandardToolbar();
       CreateCustomizeToolbar();
       //FBarManager.ItemClick += new ItemClickEventHandler(FBarManager_ItemClick);
 
-      this.FDockPanel = new DockPanel();
-      this.FDockPanel.Dock = DockStyle.Fill;
-      FParentForm.Controls.Add(FDockPanel);
-      this.FDockPanel.ActiveContentChanged += FDockPanel_ActiveContentChanged;
-
+      this.dockPanel = new DockPanel();
+      this.dockPanel.Dock = DockStyle.Fill;
+      parentForm.Controls.Add(dockPanel);
+      this.dockPanel.ActiveContentChanged += FDockPanel_ActiveContentChanged;
+      
       //FDockManager = new DockManager();
       //FDockManager.Form = FParentForm;
       //FDockManager.ActivePanelChanged += FDockManager_ActivePanelChanged;    
@@ -178,7 +181,7 @@ namespace Mammola.Huramaki.WinformsUI.Desktop
     {
       HuramakiDesktopPlate TempPanel = new HuramakiDesktopPlate();
       TempPanel.Text = "Report";
-      TempPanel.Show(FDockPanel, DockState.Float);
+      TempPanel.Show(dockPanel, DockState.Float);
       return TempPanel;
     }
 

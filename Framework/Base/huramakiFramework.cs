@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mammola.Huramaki.WinformsUI.Base
+namespace Mammola.Huramaki.Base
 { 
   
   /*public class HuramakiAvailableTransformation
