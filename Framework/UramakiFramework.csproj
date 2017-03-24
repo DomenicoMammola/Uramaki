@@ -47,13 +47,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\huramakiBase.cs" />
-    <Compile Include="Base\huramakiFramework.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="Desktop\huramakiDesktop.cs">
+    <Compile Include="Base\UramakiBase.cs" />
+    <Compile Include="Base\UramakiFramework.cs" />
+    <Compile Include="Data\DataProvider.cs" />
+    <Compile Include="MasterDetail\MasterDetail.cs" />
+    <Compile Include="MasterDetail\MasterQuery.cs" />
+    <Compile Include="MasterDetail\UI\MasterQueryDesktop.cs" />
+    <Compile Include="MasterDetail\UI\QueryPlateDesktop.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\UramakiDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

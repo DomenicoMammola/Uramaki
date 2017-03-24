@@ -1,12 +1,24 @@
+// This is part of the Uramaki Framework for Winforms
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// This software is distributed without any warranty.
+//
+// @author Domenico Mammola (mimmo71@gmail.com - www.mammola.net)
+
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Mammola.Uramaki.Data;
 
 
-namespace Mammola.Huramaki.MasterDetail
+namespace Mammola.Uramaki.MasterDetail
 {
-  public class TMasterQuery
+  public class MasterQuery
   {
     private string FSQLString;
 
@@ -16,30 +28,30 @@ namespace Mammola.Huramaki.MasterDetail
       set {FSQLString = value;}
     }
 
-    public void CopyFrom (TMasterQuery aSource)
+    public void CopyFrom (MasterQuery aSource)
     {
       this.FSQLString = aSource.FSQLString;
     }
   }
 
-  public enum TDetailConditionKind
+  public enum DetailConditionKind
   {
     ckField,
     ckConstant
   }
 
-  public class TMasterDetailCondition
+  public class MasterDetailCondition
   {
     private string FRefValue;
     private string FColumn;
-    private TDetailConditionKind FKind;
+    private DetailConditionKind FKind;
     private Type FDataType;
 
-    public TMasterDetailCondition()
+    public MasterDetailCondition()
     {
       FRefValue = null;
       FColumn = null;
-      FKind = TDetailConditionKind.ckField;
+      FKind = DetailConditionKind.ckField;
       FDataType = null;
     }
 
@@ -54,7 +66,7 @@ namespace Mammola.Huramaki.MasterDetail
       get { return FColumn; }
       set { FColumn = value; }
     }
-    public TDetailConditionKind Kind
+    public DetailConditionKind Kind
     {
       get { return FKind; }
       set { FKind = value; }
@@ -68,18 +80,18 @@ namespace Mammola.Huramaki.MasterDetail
   
   }
 
-  public class TMasterDetailConditions
+  public class MasterDetailConditions
   {
-    private List<TMasterDetailCondition> FList;
+    private List<MasterDetailCondition> FList;
 
-    public TMasterDetailConditions()
+    public MasterDetailConditions()
     {
-      FList = new List<TMasterDetailCondition>();  
+      FList = new List<MasterDetailCondition>();  
     }
 
-    public TMasterDetailCondition AddCondition()
+    public MasterDetailCondition AddCondition()
     {
-      TMasterDetailCondition Temp = new TMasterDetailCondition();
+      MasterDetailCondition Temp = new MasterDetailCondition();
       FList.Add(Temp);
       return Temp;
     }
@@ -89,7 +101,7 @@ namespace Mammola.Huramaki.MasterDetail
       get { return FList.Count; }
     }
 
-    public TMasterDetailCondition this[int index]
+    public MasterDetailCondition this[int index]
     {
       get { return (FList[index]); }
       set { FList[index] = value; }
@@ -124,16 +136,16 @@ namespace Mammola.Huramaki.MasterDetail
     }   
   }
 
-  public class TDetailQuery
+  public class DetailQuery
   {
     private string FSQLString;
-    private TMasterDetailConditions FConditions;
+    private MasterDetailConditions FConditions;
     private TDetailQueryExecutionPlan FLastExecutionPlan;
     public static string PlaceHolder = "?CONDITIONS?";
   
-    public TDetailQuery()
+    public DetailQuery()
     {
-      FConditions = new TMasterDetailConditions();
+      FConditions = new MasterDetailConditions();
       FLastExecutionPlan = new TDetailQueryExecutionPlan();
     }
 
@@ -143,7 +155,7 @@ namespace Mammola.Huramaki.MasterDetail
       set { FSQLString = value; }
     }
 
-    public TMasterDetailConditions Conditions
+    public MasterDetailConditions Conditions
     {
       get { return FConditions; }
     }
@@ -157,7 +169,7 @@ namespace Mammola.Huramaki.MasterDetail
       string CurrentAliasPrefix = "";
       //int FieldConditionsCount = 0;
       StringBuilder TempStringBuilder = new StringBuilder();
-      List<TMasterDetailCondition> FieldConditions = new List<TMasterDetailCondition>();
+      List<MasterDetailCondition> FieldConditions = new List<MasterDetailCondition>();
 
 
       if (aPerformDataAnalysis)
@@ -173,7 +185,7 @@ namespace Mammola.Huramaki.MasterDetail
           TempStringBuilder.Append('(');
           TempStringBuilder.Append(FConditions[i].Column);
           TempStringBuilder.Append('=');
-          if (FConditions[i].Kind == TDetailConditionKind.ckField)
+          if (FConditions[i].Kind == DetailConditionKind.ckField)
           {
             FieldConditions.Add(FConditions[i]);
             TempStringBuilder.Append('@');
@@ -262,11 +274,11 @@ namespace Mammola.Huramaki.MasterDetail
           }
         }
         TempStringBuilder.Append(')');
-        return FSQLString.Replace(TDetailQuery.PlaceHolder, TempStringBuilder.ToString());
+        return FSQLString.Replace(DetailQuery.PlaceHolder, TempStringBuilder.ToString());
       }
       else
       {
-        return FSQLString.Replace(TDetailQuery.PlaceHolder, "(1=0)");
+        return FSQLString.Replace(DetailQuery.PlaceHolder, "(1=0)");
       }
     }
 

@@ -1,4 +1,4 @@
-// This is part of the Huramaki Framework for Winforms
+// This is part of the Uramaki Framework for Winforms
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,12 @@ using System;
 using System.Xml;
 
 
-namespace Mammola.Huramaki.Base
+namespace Mammola.Uramaki.Base
 {
 
-  public delegate void HuramakiAskToRefreshMyChilds(HuramakiPlate aPlate);
+  public delegate void UramakiAskToRefreshMyChilds(UramakiPlate aPlate);
 
-  public abstract class Huramaki
+  public abstract class UramakiRoll
   {
     public abstract string GetMyId();
     public abstract string GetDescription();
@@ -27,61 +27,61 @@ namespace Mammola.Huramaki.Base
     public abstract void BeforeRead();
     public abstract void AfterRead();
 
-    public static string NullHuramakiId = "**NULL**"; 
+    public static string NullUramakiId = "**NULL**"; 
   }
 
-  public abstract class HuramakiPlate
+  public abstract class UramakiPlate
   {
     public Guid MyActualId;
 
-    public abstract Huramaki GeHuramaki(string aHuramakiId);
+    public abstract UramakiRoll GetUramaki(string aUramakiId);
     public abstract void StartTransaction(Guid aTransactionId);
     public abstract void EndTransaction(Guid aTransactionId);
 
-    public HuramakiAskToRefreshMyChilds AskToRefreshMyChilds;
+    public UramakiAskToRefreshMyChilds AskToRefreshMyChilds;
   }
 
-  public abstract class HuramakiPublicationContext
+  public abstract class UramakiPublicationContext
   {
   }
 
-  public abstract class HuramakiPublisher
+  public abstract class UramakiPublisher
   {
     public abstract string GetMyId();
     public abstract string GetDescription();
     public abstract string GetHelpDescription();
 
-    public abstract string GetInpuHuramakiId();
+    public abstract string GetInputUramakiId();
 
-    public abstract HuramakiPlate CreatePlate();    
-    public abstract HuramakiPublicationContext CreatePublisherContext();
+    public abstract UramakiPlate CreatePlate();    
+    public abstract UramakiPublicationContext CreatePublisherContext();
     public abstract void StartTransaction(Guid aTransactionId);
     public abstract void EndTransaction(Guid aTransactionId);
 
-    public abstract void Publish (Huramaki aInput, ref HuramakiPlate aPlate, ref HuramakiPublicationContext aContext);    
+    public abstract void Publish (UramakiRoll aInput, ref UramakiPlate aPlate, ref UramakiPublicationContext aContext);    
   }
 
-  public abstract class HuramakiTransformationContext
+  public abstract class UramakiTransformationContext
   {
     public abstract void SaveToXML (ref XmlWriter aWriter);
     public abstract void LoadFromXML (ref XmlReader aReader);
   }
   
 
-  public abstract class HuramakiTransformer
+  public abstract class UramakiTransformer
   {
     public abstract string GetMyId();
     public abstract string GetDescription();
     public abstract string GetHelpDescription();
 
-    public abstract string GetInpuHuramakiId();    
-    public abstract string GetOutpuHuramakiId();
+    public abstract string GetInputUramakiId();    
+    public abstract string GetOutputUramakiId();
 
     //public abstract Huramaki CreateOutpuHuramaki();
-    public abstract HuramakiTransformationContext CreateTransformerContext();
+    public abstract UramakiTransformationContext CreateTransformerContext();
 
-    public abstract bool Configure (Huramaki aInput, ref HuramakiTransformationContext aContext);
-    public abstract Huramaki Transform (Huramaki aInput, ref HuramakiTransformationContext aContext);        
+    public abstract bool Configure (UramakiRoll aInput, ref UramakiTransformationContext aContext);
+    public abstract UramakiRoll Transform (UramakiRoll aInput, ref UramakiTransformationContext aContext);        
 
     public abstract void StartTransaction(Guid aTransactionId);
     public abstract void EndTransaction(Guid aTransactionId);

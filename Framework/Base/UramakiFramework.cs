@@ -1,4 +1,4 @@
-// This is part of the Huramaki Framework for Winforms
+// This is part of the Uramaki Framework for Winforms
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mammola.Huramaki.Base
+namespace Mammola.Uramaki.Base
 { 
   
   /*public class HuramakiAvailableTransformation
@@ -20,70 +20,70 @@ namespace Mammola.Huramaki.Base
     public string TransformerDescription;    
   }*/
 
-  public class HuramakiActualTransformation
+  public class UramakiActualTransformation
   {
-    public HuramakiTransformer Transformer;
-    public HuramakiTransformationContext TransformationContext;
+    public UramakiTransformer Transformer;
+    public UramakiTransformationContext TransformationContext;
   }
 
   public class HuramakiActualPublication
   {
-    public HuramakiPublisher Publisher;
-    public HuramakiPublicationContext PublicationContext;
+    public UramakiPublisher Publisher;
+    public UramakiPublicationContext PublicationContext;
   }
 
-  public class HuramakiFramework
+  public class UramakiFramework
   {
     public static Guid NullId = Guid.Empty;
 
-    private class HuramakiLivingTransformation
+    private class UramakiLivingTransformation
     {
-      public HuramakiTransformer Transformer;
-      public HuramakiTransformationContext TransformationContext;
+      public UramakiTransformer Transformer;
+      public UramakiTransformationContext TransformationContext;
 
-      public HuramakiLivingTransformation()
+      public UramakiLivingTransformation()
       {
         Transformer = null;
         TransformationContext = null;
       }
     }
 
-    private class HuramakiLivingPlate 
+    private class UramakiLivingPlate 
     {
       public bool IsNullPlate;
-      public HuramakiLivingPlate ParentPlate;
-      public HuramakiPublisher Publisher;
-      public HuramakiPublicationContext PublicationContext;
-      public List<HuramakiLivingTransformation> Transformations;
-      public HuramakiPlate Plate;
-      public List<HuramakiLivingPlate> ChildPlates;
+      public UramakiLivingPlate ParentPlate;
+      public UramakiPublisher Publisher;
+      public UramakiPublicationContext PublicationContext;
+      public List<UramakiLivingTransformation> Transformations;
+      public UramakiPlate Plate;
+      public List<UramakiLivingPlate> ChildPlates;
 
-      public HuramakiLivingPlate()
+      public UramakiLivingPlate()
       {
         Plate = null;
         ParentPlate = null;        
         Publisher = null;
         PublicationContext = null;
-        Transformations = new List<HuramakiLivingTransformation>();
+        Transformations = new List<UramakiLivingTransformation>();
         IsNullPlate = false;
-        ChildPlates = new List<HuramakiLivingPlate>();        
+        ChildPlates = new List<UramakiLivingPlate>();        
       }
     }
 
-    private Dictionary<string, HuramakiTransformer> FTransformers;
-    private Dictionary<string, HuramakiPublisher> FPublishers;
-    private Dictionary<Guid, HuramakiLivingPlate> FLivingPlates;
+    private Dictionary<string, UramakiTransformer> FTransformers;
+    private Dictionary<string, UramakiPublisher> FPublishers;
+    private Dictionary<Guid, UramakiLivingPlate> FLivingPlates;
     private Guid FCurrentTransactionId;
 
-    public HuramakiFramework()
+    public UramakiFramework()
     {
-      FTransformers = new Dictionary<string, HuramakiTransformer>();
-      FPublishers = new Dictionary<string, HuramakiPublisher>();
-      FLivingPlates = new Dictionary<Guid, HuramakiLivingPlate>();
+      FTransformers = new Dictionary<string, UramakiTransformer>();
+      FPublishers = new Dictionary<string, UramakiPublisher>();
+      FLivingPlates = new Dictionary<Guid, UramakiLivingPlate>();
       FCurrentTransactionId = Guid.Empty;
     }
 
-    public void AddPublisher (HuramakiPublisher aPublisher)
+    public void AddPublisher (UramakiPublisher aPublisher)
     {
       if (! FPublishers.ContainsKey(aPublisher.GetMyId()))
       {
@@ -91,17 +91,17 @@ namespace Mammola.Huramaki.Base
       }
     }
 
-    private Huramaki BuildHuramakiFromTransformations (HuramakiLivingPlate aParentPlate, List<HuramakiLivingTransformation> aTransformations, HuramakiPublisher aPublisher)
+    private UramakiRoll BuildHuramakiFromTransformations (UramakiLivingPlate aParentPlate, List<UramakiLivingTransformation> aTransformations, UramakiPublisher aPublisher)
     {
       string currenHuramakiId = "";
-      Huramaki currenHuramaki = null;
+      UramakiRoll currenHuramaki = null;
 
       if (aTransformations.Count > 0)
       {
-        currenHuramakiId = aTransformations[0].Transformer.GetOutpuHuramakiId();
-        if (! currenHuramakiId.Equals(Huramaki.NullHuramakiId))
+        currenHuramakiId = aTransformations[0].Transformer.GetOutputUramakiId();
+        if (! currenHuramakiId.Equals(UramakiRoll.NullUramakiId))
         {
-          currenHuramaki = aParentPlate.Plate.GeHuramaki(currenHuramakiId);
+          currenHuramaki = aParentPlate.Plate.GetUramaki(currenHuramakiId);
         }
           
         for (int i = 0; i < aTransformations.Count; i++)
@@ -111,27 +111,27 @@ namespace Mammola.Huramaki.Base
       }
       else
       {
-        currenHuramakiId = aPublisher.GetInpuHuramakiId();
+        currenHuramakiId = aPublisher.GetInputUramakiId();
         
-        if (! currenHuramakiId.Equals(Huramaki.NullHuramakiId))
+        if (! currenHuramakiId.Equals(UramakiRoll.NullUramakiId))
         {
-          currenHuramaki = aParentPlate.Plate.GeHuramaki(currenHuramakiId);
+          currenHuramaki = aParentPlate.Plate.GetUramaki(currenHuramakiId);
         }
       }
       return currenHuramaki;    
     }
 
-    private void ServeAskToRefreshMyChilds(HuramakiPlate aPlate)
+    private void ServeAskToRefreshMyChilds(UramakiPlate aPlate)
     {
-      HuramakiLivingPlate TempLivingPlate;
+      UramakiLivingPlate TempLivingPlate;
       if (FLivingPlates.TryGetValue(aPlate.MyActualId, out TempLivingPlate))
       {
-        Huramaki CurrenHuramaki = null;
+        UramakiRoll CurrenHuramaki = null;
         
         this.StartTransaction();
         try
         {
-          foreach (HuramakiLivingPlate ChildPlate in TempLivingPlate.ChildPlates)
+          foreach (UramakiLivingPlate ChildPlate in TempLivingPlate.ChildPlates)
           {
             CurrenHuramaki = BuildHuramakiFromTransformations(TempLivingPlate, ChildPlate.Transformations, ChildPlate.Publisher);
             ChildPlate.Publisher.Publish(CurrenHuramaki, ref ChildPlate.Plate, ref ChildPlate.PublicationContext);      
@@ -144,7 +144,7 @@ namespace Mammola.Huramaki.Base
       }
     }
 
-    public void AddTransformer (HuramakiTransformer aTransformer)
+    public void AddTransformer (UramakiTransformer aTransformer)
     {
       if (! FTransformers.ContainsKey(aTransformer.GetMyId()))
       {
@@ -152,13 +152,13 @@ namespace Mammola.Huramaki.Base
       }
     } 
     
-    public HuramakiPlate BuildPlate(Guid aParentPlateId, ref List<HuramakiActualTransformation> aTransformations, ref HuramakiActualPublication aPublication)
+    public UramakiPlate BuildPlate(Guid aParentPlateId, ref List<UramakiActualTransformation> aTransformations, ref HuramakiActualPublication aPublication)
     {
-      HuramakiLivingPlate TempParentPlate;      
+      UramakiLivingPlate TempParentPlate;      
 
       if (aParentPlateId == NullId)
       {
-        TempParentPlate = new HuramakiLivingPlate();
+        TempParentPlate = new UramakiLivingPlate();
         TempParentPlate.IsNullPlate = true;
       }
       else
@@ -168,16 +168,16 @@ namespace Mammola.Huramaki.Base
           return null;
         }
       }
-      HuramakiLivingPlate TempNewLivingPlate = new HuramakiLivingPlate();
+      UramakiLivingPlate TempNewLivingPlate = new UramakiLivingPlate();
       TempNewLivingPlate.ParentPlate = TempParentPlate;      
       TempNewLivingPlate.Publisher = aPublication.Publisher;
       TempNewLivingPlate.PublicationContext = aPublication.PublicationContext;
       TempNewLivingPlate.Plate = TempNewLivingPlate.Publisher.CreatePlate();
       TempNewLivingPlate.Plate.MyActualId = new Guid();
       TempNewLivingPlate.Plate.AskToRefreshMyChilds = this.ServeAskToRefreshMyChilds;
-      foreach(HuramakiActualTransformation TempTransf in aTransformations)
+      foreach(UramakiActualTransformation TempTransf in aTransformations)
       {
-        HuramakiLivingTransformation TempLivingTransf = new HuramakiLivingTransformation();
+        UramakiLivingTransformation TempLivingTransf = new UramakiLivingTransformation();
         TempLivingTransf.Transformer = TempTransf.Transformer;
         TempLivingTransf.TransformationContext = TempTransf.TransformationContext;
           
@@ -187,7 +187,7 @@ namespace Mammola.Huramaki.Base
       FLivingPlates.Add(TempNewLivingPlate.Plate.MyActualId, TempNewLivingPlate);
 
       //string currenHuramakiId = "";
-      Huramaki currenHuramaki = BuildHuramakiFromTransformations(TempNewLivingPlate.ParentPlate, TempNewLivingPlate.Transformations, TempNewLivingPlate.Publisher);  
+      UramakiRoll currenHuramaki = BuildHuramakiFromTransformations(TempNewLivingPlate.ParentPlate, TempNewLivingPlate.Transformations, TempNewLivingPlate.Publisher);  
 
       /*
       if (TempNewLivingPlate.Transformations.Count > 0)
@@ -229,17 +229,17 @@ namespace Mammola.Huramaki.Base
       FCurrentTransactionId = Guid.NewGuid();
 
       
-      foreach (KeyValuePair<string, HuramakiTransformer> entry in FTransformers)
+      foreach (KeyValuePair<string, UramakiTransformer> entry in FTransformers)
       {
         entry.Value.StartTransaction(FCurrentTransactionId);
       }
 
-      foreach (KeyValuePair<string, HuramakiPublisher> entry in FPublishers)
+      foreach (KeyValuePair<string, UramakiPublisher> entry in FPublishers)
       {
         entry.Value.StartTransaction(FCurrentTransactionId);
       }
 
-      foreach (KeyValuePair<Guid, HuramakiLivingPlate> entry in FLivingPlates)
+      foreach (KeyValuePair<Guid, UramakiLivingPlate> entry in FLivingPlates)
       {
         entry.Value.Plate.StartTransaction(FCurrentTransactionId);
       }
@@ -253,17 +253,17 @@ namespace Mammola.Huramaki.Base
         throw new System.Exception("HuramakiFramework: No transaction is in progress.");
       }
             
-      foreach (KeyValuePair<string, HuramakiTransformer> entry in FTransformers)
+      foreach (KeyValuePair<string, UramakiTransformer> entry in FTransformers)
       {
         entry.Value.EndTransaction(FCurrentTransactionId);
       }
 
-      foreach (KeyValuePair<string, HuramakiPublisher> entry in FPublishers)
+      foreach (KeyValuePair<string, UramakiPublisher> entry in FPublishers)
       {
         entry.Value.EndTransaction(FCurrentTransactionId);
       }
 
-      foreach (KeyValuePair<Guid, HuramakiLivingPlate> entry in FLivingPlates)
+      foreach (KeyValuePair<Guid, UramakiLivingPlate> entry in FLivingPlates)
       {
         entry.Value.Plate.EndTransaction(FCurrentTransactionId);
       }
@@ -271,12 +271,12 @@ namespace Mammola.Huramaki.Base
       FCurrentTransactionId = Guid.Empty;
     }
 
-    public List <HuramakiTransformer> GetAvailableTransformers (string aInpuHuramakiId)
+    public List <UramakiTransformer> GetAvailableTransformers (string aInpuHuramakiId)
     {
-      List<HuramakiTransformer> TempList = new List<HuramakiTransformer>();
-      foreach (KeyValuePair<string, HuramakiTransformer > entry in FTransformers)
+      List<UramakiTransformer> TempList = new List<UramakiTransformer>();
+      foreach (KeyValuePair<string, UramakiTransformer > entry in FTransformers)
       {
-         if (String.Compare(entry.Value.GetInpuHuramakiId(), aInpuHuramakiId, true) == 0)
+         if (String.Compare(entry.Value.GetInputUramakiId(), aInpuHuramakiId, true) == 0)
          {
            TempList.Add(entry.Value);
          }
@@ -284,12 +284,12 @@ namespace Mammola.Huramaki.Base
       return TempList;
     }
 
-    public List <HuramakiPublisher> GetAvailablePublishers (string aInpuHuramakiId)
+    public List <UramakiPublisher> GetAvailablePublishers (string aInpuHuramakiId)
     {
-      List<HuramakiPublisher> TempList = new List<HuramakiPublisher>();
-      foreach(KeyValuePair<string, HuramakiPublisher> entry in FPublishers)
+      List<UramakiPublisher> TempList = new List<UramakiPublisher>();
+      foreach(KeyValuePair<string, UramakiPublisher> entry in FPublishers)
       {
-        if (String.Compare(entry.Value.GetInpuHuramakiId(), aInpuHuramakiId, true) == 0)
+        if (String.Compare(entry.Value.GetInputUramakiId(), aInpuHuramakiId, true) == 0)
         {
           TempList.Add(entry.Value);
         }
