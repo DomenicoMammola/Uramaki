@@ -37,7 +37,7 @@ namespace Mammola.Uramaki.Base
     public static string NullUramakiId = "**NULL**"; 
   }
 
-  public abstract class UramakiPlate
+  public abstract class UramakiPlate : DockContent
   {
     private Guid instanceIdentifier;
     public Guid InstanceIdentifier 
@@ -57,19 +57,9 @@ namespace Mammola.Uramaki.Base
       }
     }
     
-    private DockContent dockpanel;
-    public DockContent DockPanel 
+    public void Init (Guid newInstanceIdentifier)
     {
-      get
-      {
-        return dockpanel;
-      }
-    }
-
-    public void Init (ref DockContent dockContent, Guid newInstanceIdentifier)
-    {
-      this.dockpanel = dockContent;
-      this.instanceIdentifier = newInstanceIdentifier;
+      this.instanceIdentifier = newInstanceIdentifier;      
     }
 
     public abstract UramakiRoll GetUramaki(string uramakiId);
@@ -81,6 +71,8 @@ namespace Mammola.Uramaki.Base
 
   public abstract class UramakiPublicationContext
   {
+    public abstract void SaveToXML (ref XmlWriter writer);
+    public abstract void LoadFromXML (ref XmlReader reader);
   }
 
   public abstract class UramakiPublisher
@@ -115,7 +107,6 @@ namespace Mammola.Uramaki.Base
     public abstract string GetInputUramakiId();    
     public abstract string GetOutputUramakiId();
 
-    //public abstract Huramaki CreateOutpuHuramaki();
     public abstract UramakiTransformationContext CreateTransformerContext();
 
     public abstract bool Configure (UramakiRoll input, ref UramakiTransformationContext context);

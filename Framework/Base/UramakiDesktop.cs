@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Mammola.Uramaki.Base;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Mammola.Uramaki.Base
 {
@@ -21,7 +22,7 @@ public class UramakiDesktopManager
 
     private UramakiFramework Framework;
     private Form ParentForm;
-    private DockPanel DockPanel;
+    private DockPanel DockMainPanel;
     private ToolStrip MainToolbar;
 
     int LastActivePanelHashCode;
@@ -36,8 +37,36 @@ public class UramakiDesktopManager
     {
       LoadMenuButton = new ToolStripButton("Load");
       MainToolbar.Items.Add(LoadMenuButton);
+      LoadMenuButton.Click += LoadMenuButton_Click;
       SaveMenuButton = new ToolStripButton("Save");
       MainToolbar.Items.Add(SaveMenuButton);
+      SaveMenuButton.Click += SaveMenuButton_Click;
+    }
+
+    private void LoadMenuButton_Click(object sender, EventArgs e)
+    {
+      DockMainPanel.LoadFromXml("c:\\temp\\prova2.xml", );
+    }
+
+    private void SaveMenuButton_Click(object sender, EventArgs e)
+    {
+
+      XmlWriter writer = XmlWriter.Create("c:\\temp\\prova.xml");
+      writer.WriteStartDocument();
+      writer.WriteStartElement("layout");
+
+      writer.WriteAttributeString("version", "1");
+
+      Framework.SaveToXml(ref writer);
+      
+      writer.WriteEndElement(); // layout
+
+      
+
+      writer.WriteEndDocument();
+      writer.Flush();
+
+      DockMainPanel.SaveAsXml("c:\\temp\\prova2.xml");
     }
 
     private void CreateCustomizeToolbar()    
@@ -99,14 +128,12 @@ public class UramakiDesktopManager
 
         UramakiActualPublication tempPublication = new UramakiActualPublication();
         tempPublication.Publisher = tempPublisher;
+        tempPublication.PublicationContext = tempPublisher.CreatePublisherContext();
 
         UramakiPlate actualPlate = Framework.BuildPlate(UramakiFramework.NullId, ref actualTransformations, ref tempPublication);
-        actualPlate.DockPanel.Text = "Report";
-        actualPlate.DockPanel.Show(DockPanel, DockState.Float);
+        actualPlate.Text = "Report";
+        actualPlate.Show(DockMainPanel, DockState.Float);
       }
-      //this.FDockPanel.
-      //DockPanel TempPanel = FDockManager.AddPanel(DockingStyle.Float);
-
     }
 
     public void Init(ref UramakiFramework framework, Form parentForm)
@@ -115,10 +142,10 @@ public class UramakiDesktopManager
       this.ParentForm = parentForm;
       this.ParentForm.IsMdiContainer = true;            
 
-      this.DockPanel = new DockPanel();
-      this.DockPanel.Dock = DockStyle.Fill;
-      ParentForm.Controls.Add(DockPanel);
-      this.DockPanel.ActiveContentChanged += FDockPanel_ActiveContentChanged;
+      this.DockMainPanel = new DockPanel();
+      this.DockMainPanel.Dock = DockStyle.Fill;
+      ParentForm.Controls.Add(DockMainPanel);
+      this.DockMainPanel.ActiveContentChanged += FDockPanel_ActiveContentChanged;
       
       MainToolbar = new ToolStrip();
       MainToolbar.Parent = ParentForm;

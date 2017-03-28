@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Mammola.Uramaki.Base
@@ -69,11 +70,55 @@ namespace Mammola.Uramaki.Base
         IsNullPlate = false;
         ChildPlates = new List<UramakiLivingPlate>();        
       }
+
+      public void SaveToXml(ref XmlWriter writer)
+      {
+        writer.WriteStartElement("livingPlate");
+        
+        writer.WriteStartAttribute("isNullPlate");
+        writer.WriteValue(this.IsNullPlate);
+        writer.WriteEndAttribute();
+
+        writer.WriteStartAttribute("publisherId");
+        writer.WriteValue(Publisher.GetMyId());
+        writer.WriteEndAttribute();
+
+        if (PublicationContext != null)
+        {
+          PublicationContext.SaveToXML(ref writer);
+        }
+        
+        writer.WriteStartElement("transformations");
+
+        foreach (UramakiLivingTransformation transf in  Transformations)
+        {
+          writer.WriteStartElement("transformation");
+          
+          writer.WriteStartAttribute("transformerId");
+          writer.WriteValue(transf.Transformer.GetMyId().ToString());          
+          writer.WriteEndAttribute();
+
+          transf.TransformationContext.SaveToXML(ref writer);
+          
+          writer.WriteEndElement(); // transformation
+        }
+
+        writer.WriteEndElement();  // transformations
+
+        writer.WriteStartElement("childs");
+
+        
+
+        writer.WriteEndElement(); // childs
+        
+        writer.WriteEndElement(); //  livingPlate     
+      }
     }
 
     private Dictionary<string, UramakiTransformer> Transformers;
     private Dictionary<string, UramakiPublisher> Publishers;
     private Dictionary<Guid, UramakiLivingPlate> LivingPlates;
+    private List<UramakiLivingPlate> LivingPlatesList;
     private Guid CurrentTransactionId;
 
     public UramakiFramework()
@@ -81,6 +126,7 @@ namespace Mammola.Uramaki.Base
       Transformers = new Dictionary<string, UramakiTransformer>();
       Publishers = new Dictionary<string, UramakiPublisher>();
       LivingPlates = new Dictionary<Guid, UramakiLivingPlate>();
+      LivingPlatesList = new List<UramakiLivingPlate>();
       CurrentTransactionId = Guid.Empty;
     }
 
@@ -152,6 +198,42 @@ namespace Mammola.Uramaki.Base
         Transformers.Add(transformer.GetMyId(), transformer);
       }
     } 
+
+    public void LoadFromXml(ref XmlReader reader) 
+    {
+      reader.ReadToFollowing("configuration");
+
+    }
+
+    private List<UramakiLivingPlate> FindRootPlates() 
+    {
+      List <UramakiLivingPlate> tempList = new List<UramakiLivingPlate>();
+
+      foreach (UramakiLivingPlate plate in LivingPlatesList)
+      {
+        if (plate.ParentPlate.IsNullPlate) 
+        {
+          tempList.Add(plate);
+        }
+      }
+
+      return tempList;
+    }
+    
+    
+    public void SaveToXml(ref XmlWriter writer)
+    {
+      writer.WriteStartElement("elements");
+
+      List<UramakiLivingPlate> roots = FindRootPlates();
+      foreach (UramakiLivingPlate plate in roots) 
+      {
+        plate.SaveToXml(ref writer);
+      }
+
+      writer.WriteEndElement();
+      
+    }
     
     public UramakiPlate BuildPlate(Guid parentPlateId, ref List<UramakiActualTransformation> transformations, ref UramakiActualPublication publication)
     {
@@ -172,10 +254,10 @@ namespace Mammola.Uramaki.Base
       UramakiLivingPlate tempNewLivingPlate = new UramakiLivingPlate();
       tempNewLivingPlate.ParentPlate = tempParentPlate;      
       tempNewLivingPlate.Publisher = publication.Publisher;
-      tempNewLivingPlate.PublicationContext = publication.PublicationContext; 
-      DockContent tmpDockContent = new DockContent();     
+      tempNewLivingPlate.PublicationContext = publication.PublicationContext;       
       tempNewLivingPlate.Plate = tempNewLivingPlate.Publisher.CreatePlate();      
-      tempNewLivingPlate.Plate.Init(ref tmpDockContent, Guid.NewGuid());
+      tempNewLivingPlate.Plate.Init(Guid.NewGuid());
+      
       tempNewLivingPlate.Plate.AskToRefreshMyChilds = this.ServeAskToRefreshMyChilds;
       foreach(UramakiActualTransformation tempTransf in transformations)
       {
@@ -187,34 +269,10 @@ namespace Mammola.Uramaki.Base
       }
 
       LivingPlates.Add(tempNewLivingPlate.Plate.InstanceIdentifier, tempNewLivingPlate);
+      LivingPlatesList.Add(tempNewLivingPlate);
 
-      //string currenHuramakiId = "";
       UramakiRoll currenHuramaki = BuildUramakiFromTransformations(tempNewLivingPlate.ParentPlate, tempNewLivingPlate.Transformations, tempNewLivingPlate.Publisher);  
 
-      /*
-      if (TempNewLivingPlate.Transformations.Count > 0)
-      {
-        currenHuramakiId = TempNewLivingPlate.Transformations[0].Transformer.GetOutpuHuramakiId();
-        if (! currenHuramakiId.Equals(Huramaki.NullHuramakiId))
-        {
-          currenHuramaki = TempNewLivingPlate.ParentPlate.Plate.GeHuramaki(currenHuramakiId);
-        }
-          
-        for (int i = 0; i < TempNewLivingPlate.Transformations.Count; i++)
-        { 
-          currenHuramaki = TempNewLivingPlate.Transformations[i].Transformer.Transform(currenHuramaki, ref TempNewLivingPlate.Transformations[i].TransformationContext);
-        }       
-      }
-      else
-      {
-        currenHuramakiId = TempNewLivingPlate.Publisher.GetInpuHuramakiId();
-        
-        if (! currenHuramakiId.Equals(Huramaki.NullHuramakiId))
-        {
-          currenHuramaki = TempNewLivingPlate.ParentPlate.Plate.GeHuramaki(currenHuramakiId);
-        }
-      }
-      */
       tempParentPlate.ChildPlates.Add(tempNewLivingPlate);
       tempNewLivingPlate.Publisher.Publish(currenHuramaki, ref tempNewLivingPlate.Plate, ref tempNewLivingPlate.PublicationContext);      
 

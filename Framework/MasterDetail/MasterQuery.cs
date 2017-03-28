@@ -159,7 +159,13 @@ namespace Mammola.Uramaki.MasterDetail
 
   public class UramakiQueryPublisherGridContext : UramakiPublicationContext
   {
-    // anything?
+    public override void SaveToXML (ref XmlWriter writer)
+    {
+    }
+
+    public override void LoadFromXML (ref XmlReader reader)
+    {
+    }    
   }
 
   public class MasterQueryUramakiPublisherGrid : UramakiPublisher
