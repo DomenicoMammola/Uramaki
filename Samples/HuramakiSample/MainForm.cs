@@ -1,6 +1,5 @@
 ﻿using Mammola.Uramaki.Base;
 using Mammola.Uramaki.MasterDetail;
-using Mammola.Uramaki.UI;
 using System.Windows.Forms;
 
 
@@ -20,7 +19,7 @@ namespace HuramakiSample
 
       MasterQueryUramakiTransformer MasterQueryTransformer = new MasterQueryUramakiTransformer(); 
       uramakiFW.AddTransformer(MasterQueryTransformer);
-      MasterQueryUramakiDesktopPublisherGrid QueryGridPublisher = new MasterQueryUramakiDesktopPublisherGrid(ref uramakiDesktopManager);
+      MasterQueryUramakiPublisherGrid QueryGridPublisher = new MasterQueryUramakiPublisherGrid();
       uramakiFW.AddPublisher(QueryGridPublisher);
 
 

@@ -11,7 +11,6 @@
 
 using System;
 using Mammola.Uramaki.Base;
-using Mammola.Uramaki.UI;
 //using DevExpress.XtraGrid;
 
 namespace Mammola.Uramaki.MasterDetail
@@ -21,21 +20,19 @@ namespace Mammola.Uramaki.MasterDetail
   {
     //private DevExpress.XtraGrid.GridControl FGridControl;
     //private DevExpress.XtraGrid.Views.Grid.GridView FGridView;
+    
 
-    //public Guid MyActualId;
-    public HuramakiDesktopPlate DesktopPlate;
-
-
-    public override UramakiRoll GetUramaki(string aHuramakiId)
+    public override UramakiRoll GetUramaki(string uramakiId)
     {
       return null;
     }
-    public override void StartTransaction(Guid aTransactionId)    
+
+    public override void StartTransaction(Guid transactionId)    
     {
       // fa nulla
     }
 
-    public override void EndTransaction(Guid aTransactionId)
+    public override void EndTransaction(Guid transactionId)
     {
       // fa nulla
     }

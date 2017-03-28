@@ -12,6 +12,7 @@
 using System;
 using System.Xml;
 using Mammola.Uramaki.Base;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Mammola.Uramaki.MasterDetail
 {
@@ -126,17 +127,19 @@ namespace Mammola.Uramaki.MasterDetail
       return new MasterQueryUramakiTransformationContext();
     }
 
-    public override bool Configure (UramakiRoll aInput, ref UramakiTransformationContext aContext)
-    {
-      return true;
-    }
+   public override bool Configure (UramakiRoll aInput, ref UramakiTransformationContext aContext)
+   {
+     MasterQueryUramakiTransformationContext TempContext = (MasterQueryUramakiTransformationContext)aContext;
+
+     return true;
+   }   
 
     public override UramakiRoll Transform (UramakiRoll aInput, ref UramakiTransformationContext aContext)
     {
       MasterQueryUramakiRoll OutputUramaki = new MasterQueryUramakiRoll();
       MasterQueryUramakiTransformationContext TempContext = (MasterQueryUramakiTransformationContext)aContext;
 
-      if (TempContext.MasterQuery.SQLString.Length == 0)
+      if (String.IsNullOrEmpty(TempContext.MasterQuery.SQLString))
         this.Configure(null, ref aContext);
 
       OutputUramaki.MasterQuery.CopyFrom (TempContext.MasterQuery);
@@ -183,11 +186,6 @@ namespace Mammola.Uramaki.MasterDetail
       return MasterQueryUramakiRoll.UramakiId;
     }
 
-    public override UramakiPlate CreatePlate()
-    {
-      return null;
-    }
-
     public override UramakiPublicationContext CreatePublisherContext()
     {
       return new UramakiQueryPublisherGridContext();
@@ -203,9 +201,16 @@ namespace Mammola.Uramaki.MasterDetail
       // do nothing
     }
 
-    public override void Publish (UramakiRoll aInput, ref UramakiPlate aPlate, ref UramakiPublicationContext aContext)
+    public override UramakiPlate CreatePlate()
     {
-      // do nothing
+       QueryUramakiPlate TempPlate = new QueryUramakiPlate();
+       return TempPlate;
+    }
+
+    public override void Publish (UramakiRoll input, ref UramakiPlate plate, ref UramakiPublicationContext context)
+    {
+      QueryUramakiPlate tempPlate = plate as QueryUramakiPlate;
+      tempPlate.BuildGrid();      
     }
     
     

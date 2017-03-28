@@ -10,10 +10,17 @@
 
 using System;
 using System.Xml;
-
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Mammola.Uramaki.Base
 {
+
+  public class UramakiException : Exception 
+  {
+    public UramakiException(): base() {}
+    public UramakiException(string message): base(message) {}
+    public UramakiException(string message, Exception inner): base(message, inner) {}
+  }
 
   public delegate void UramakiAskToRefreshMyChilds(UramakiPlate aPlate);
 
@@ -32,11 +39,42 @@ namespace Mammola.Uramaki.Base
 
   public abstract class UramakiPlate
   {
-    public Guid MyActualId;
+    private Guid instanceIdentifier;
+    public Guid InstanceIdentifier 
+    {
+      get
+      {
+        return instanceIdentifier;
+      }
+    }    
+    
+    private UramakiFramework framework;
+    public UramakiFramework Framework 
+    {
+      get
+      {
+        return framework;
+      }
+    }
+    
+    private DockContent dockpanel;
+    public DockContent DockPanel 
+    {
+      get
+      {
+        return dockpanel;
+      }
+    }
 
-    public abstract UramakiRoll GetUramaki(string aUramakiId);
-    public abstract void StartTransaction(Guid aTransactionId);
-    public abstract void EndTransaction(Guid aTransactionId);
+    public void Init (ref DockContent dockContent, Guid newInstanceIdentifier)
+    {
+      this.dockpanel = dockContent;
+      this.instanceIdentifier = newInstanceIdentifier;
+    }
+
+    public abstract UramakiRoll GetUramaki(string uramakiId);
+    public abstract void StartTransaction(Guid transactionId);
+    public abstract void EndTransaction(Guid transactionId);
 
     public UramakiAskToRefreshMyChilds AskToRefreshMyChilds;
   }
@@ -55,16 +93,16 @@ namespace Mammola.Uramaki.Base
 
     public abstract UramakiPlate CreatePlate();    
     public abstract UramakiPublicationContext CreatePublisherContext();
-    public abstract void StartTransaction(Guid aTransactionId);
-    public abstract void EndTransaction(Guid aTransactionId);
+    public abstract void StartTransaction(Guid transactionId);
+    public abstract void EndTransaction(Guid transactionId);
 
-    public abstract void Publish (UramakiRoll aInput, ref UramakiPlate aPlate, ref UramakiPublicationContext aContext);    
+    public abstract void Publish (UramakiRoll input, ref UramakiPlate plate, ref UramakiPublicationContext context);    
   }
 
   public abstract class UramakiTransformationContext
   {
-    public abstract void SaveToXML (ref XmlWriter aWriter);
-    public abstract void LoadFromXML (ref XmlReader aReader);
+    public abstract void SaveToXML (ref XmlWriter writer);
+    public abstract void LoadFromXML (ref XmlReader reader);
   }
   
 
@@ -80,10 +118,10 @@ namespace Mammola.Uramaki.Base
     //public abstract Huramaki CreateOutpuHuramaki();
     public abstract UramakiTransformationContext CreateTransformerContext();
 
-    public abstract bool Configure (UramakiRoll aInput, ref UramakiTransformationContext aContext);
-    public abstract UramakiRoll Transform (UramakiRoll aInput, ref UramakiTransformationContext aContext);        
+    public abstract bool Configure (UramakiRoll input, ref UramakiTransformationContext context);
+    public abstract UramakiRoll Transform (UramakiRoll input, ref UramakiTransformationContext context);        
 
-    public abstract void StartTransaction(Guid aTransactionId);
-    public abstract void EndTransaction(Guid aTransactionId);
+    public abstract void StartTransaction(Guid transactionId);
+    public abstract void EndTransaction(Guid transactionId);
   }
 }
