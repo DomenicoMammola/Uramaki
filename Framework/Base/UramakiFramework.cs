@@ -75,6 +75,8 @@ namespace Mammola.Uramaki.Base
       {
         writer.WriteStartElement("livingPlate");
         
+        writer.WriteAttributeString("instance", this.Plate.InstanceIdentifier.ToString());
+        
         writer.WriteStartAttribute("isNullPlate");
         writer.WriteValue(this.IsNullPlate);
         writer.WriteEndAttribute();
@@ -106,7 +108,6 @@ namespace Mammola.Uramaki.Base
         writer.WriteEndElement();  // transformations
 
         writer.WriteStartElement("childs");
-
         
 
         writer.WriteEndElement(); // childs

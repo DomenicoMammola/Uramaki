@@ -24,6 +24,7 @@ public class UramakiDesktopManager
     private Form ParentForm;
     private DockPanel DockMainPanel;
     private ToolStrip MainToolbar;
+    private DeserializeDockContent hDeserializeDockContent;
 
     int LastActivePanelHashCode;
     private ToolStripButton LoadMenuButton;
@@ -43,9 +44,23 @@ public class UramakiDesktopManager
       SaveMenuButton.Click += SaveMenuButton_Click;
     }
 
+    private IDockContent GetContentFromPersistString(string persistString)
+    {
+      
+      string[] parsedStrings = persistString.Split(new char[] { '#' });
+      if (parsedStrings.Length != 2)
+          return null;
+
+      UramakiPlate plate = (UramakiPlate) System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(parsedStrings[0]);
+      Guid tempGuid;
+      Guid.TryParse(parsedStrings[1], out tempGuid); 
+      plate.Init(tempGuid);
+      return plate;
+   }
+
     private void LoadMenuButton_Click(object sender, EventArgs e)
     {
-      DockMainPanel.LoadFromXml("c:\\temp\\prova2.xml", );
+      DockMainPanel.LoadFromXml("c:\\temp\\prova2.xml", hDeserializeDockContent);
     }
 
     private void SaveMenuButton_Click(object sender, EventArgs e)
@@ -58,14 +73,19 @@ public class UramakiDesktopManager
       writer.WriteAttributeString("version", "1");
 
       Framework.SaveToXml(ref writer);
-      
+            
+
+      writer.WriteStartElement("docking");
+      System.IO.MemoryStream ms = new System.IO.MemoryStream();
+      DockMainPanel.SaveAsXml(ms, Encoding.UTF8);
+      ms.Position = 0;
+      writer.WriteBase64(ms.ToArray(), 0, (int)ms.Length);     
+      writer.WriteEndElement(); // docking
+
       writer.WriteEndElement(); // layout
 
-      
-
       writer.WriteEndDocument();
-      writer.Flush();
-
+      writer.Flush();      
       DockMainPanel.SaveAsXml("c:\\temp\\prova2.xml");
     }
 
@@ -152,6 +172,7 @@ public class UramakiDesktopManager
       MainToolbar.Dock = DockStyle.Top;      
       CreateStandardToolbar();
       CreateCustomizeToolbar();   
+      hDeserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
     }
 
     private void FDockPanel_ActiveContentChanged(object sender, EventArgs e)
